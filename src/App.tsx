@@ -14,20 +14,30 @@ interface PlayerList extends Player {
 
 function App() {
   const [playerList, setPlayerList] = useState<PlayerList[]>([]);
-  const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
+  const [selectedPlayers, setSelectedPlayers] = useState<Set<string>>(new Set());
   const [score, setScore] = useState(0);
   const [maxScore, setMaxScore] = useState(0);
 
+  function shufflePlayers(array: PlayerList[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
   function handleCardClick(id: string) {
-    if (selectedPlayers.includes(id)) {
+    if (selectedPlayers.has(id)) {
       if (score > maxScore) setMaxScore(score);
       setScore(0);
-      setSelectedPlayers([]);
+      setSelectedPlayers(new Set());
       return;
     }
 
     setScore(score + 1);
-    setSelectedPlayers([...selectedPlayers, id]);
+    setSelectedPlayers(new Set(selectedPlayers.add(id)));
+    setPlayerList(shufflePlayers(playerList.slice()))
   }
 
   useEffect(() => {
@@ -59,7 +69,7 @@ function App() {
           });
         }
 
-        setPlayerList(playersWithImgUrl);
+        setPlayerList(shufflePlayers(playersWithImgUrl));
       }
 
       getImagesUrlsFromGifs();
@@ -73,7 +83,7 @@ function App() {
         <p>{maxScore}</p>
       </header>
       {playerList.map((player) => (
-        <Card key={player.id} player={player} onClick={handleCardClick}/>
+        <Card key={player.id} player={player} onClick={handleCardClick} />
       ))}
     </>
   );
