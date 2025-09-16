@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import players from "./players";
 import type { Player } from "./players";
+import { Card } from "./components/Card";
 import { getGifUrl } from "./utils";
 import "./App.css";
 
@@ -8,11 +9,26 @@ const API_KEY = "Sv8ppGyxWpTMsC5PLH90uvD2RvUuM4fF";
 let didInit = false;
 
 interface PlayerList extends Player {
-  imageUrl: string;
+  gifUrl: string;
 }
 
 function App() {
   const [playerList, setPlayerList] = useState<PlayerList[]>([]);
+  const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
+  const [score, setScore] = useState(0);
+  const [maxScore, setMaxScore] = useState(0);
+
+  function handleCardClick(id: string) {
+    if (selectedPlayers.includes(id)) {
+      if (score > maxScore) setMaxScore(score);
+      setScore(0);
+      setSelectedPlayers([]);
+      return;
+    }
+
+    setScore(score + 1);
+    setSelectedPlayers([...selectedPlayers, id]);
+  }
 
   useEffect(() => {
     if (!didInit) {
@@ -39,7 +55,7 @@ function App() {
         for (const [i, player] of players.entries()) {
           playersWithImgUrl.push({
             ...player,
-            imageUrl: gifs[i].data.images.original.url,
+            gifUrl: gifs[i].data.images.original.url,
           });
         }
 
@@ -52,9 +68,13 @@ function App() {
 
   return (
     <>
-      {playerList.map(player => 
-          <img src={player.imageUrl} alt={player.name}></img>
-      )}
+      <header>
+        <p>{score}</p>
+        <p>{maxScore}</p>
+      </header>
+      {playerList.map((player) => (
+        <Card key={player.id} player={player} onClick={handleCardClick}/>
+      ))}
     </>
   );
 }
