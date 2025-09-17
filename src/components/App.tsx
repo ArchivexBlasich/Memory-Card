@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import data from "../data";
 import type { Data } from "../data";
 import { Card } from "./Card";
@@ -19,6 +19,7 @@ function App() {
   );
   const [score, setScore] = useState(0);
   const [maxScore, setMaxScore] = useState(0);
+  const openDialogRef = useRef<HTMLDialogElement>(null);
 
   function shufflePlayers(array: DataList[]) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -73,14 +74,36 @@ function App() {
       }
 
       getImagesUrlsFromGifs();
+
+      if (openDialogRef.current) {
+        openDialogRef.current.showModal();
+      }
     }
   }, []);
 
-  {
-    console.log(dataList);
+  function handleCloseOpenModal() {
+    if (openDialogRef.current) {
+        openDialogRef.current.close();
+      }
   }
+
   return (
     <div className="container">
+      <dialog ref={openDialogRef}>
+        <div>
+          <h2>🏆 Game Instructions</h2>
+          <ol>
+            <li>Click on different Cards to score points.</li>
+            <li>
+              Don’t click the same card twice — if you do, the round ends!
+            </li>
+            <li>After each click, the cards shuffle into a new order.</li>
+            <li>Your score increases with each unique card you pick.</li>
+            <li>Try to beat your Best Score!</li>
+          </ol>
+          <button onClick={handleCloseOpenModal}>Play</button>
+        </div>
+      </dialog>
       <header>
         <h2>🇦🇷 MemorArgentina</h2>
         <div className="score">

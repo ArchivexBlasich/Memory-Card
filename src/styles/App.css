@@ -27,3 +27,43 @@ header {
   gap: 1rem; /* space between cards */
   grid-template-columns: repeat(auto-fit, minmax(var(--card-width), 1fr));
 }
+
+dialog {
+  margin: auto;
+  border-color: #ffd700;
+  border-radius: 12px;
+  background: linear-gradient(
+    180deg,
+    var(--argentina-blue) 0%,
+    var(--argentina-white) 50%,
+    var(--argentina-blue) 100%
+  );
+}
+
+dialog > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+dialog button {
+  align-self: stretch;
+  background-color: gold;
+  border: 1px white black;
+  border-radius: 10px;
+  outline: none;
+
+  transition: transform 200ms ease;
+}
+
+dialog button:hover {
+    cursor: pointer;
+    transform: translateY(-3px);
+  }
+
+dialog::backdrop {
+  background: rgba(255,255,255,0.15);  
+  backdrop-filter: blur(10px);   
+}
