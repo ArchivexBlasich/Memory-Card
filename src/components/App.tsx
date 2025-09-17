@@ -1,24 +1,26 @@
 import { useState, useEffect } from "react";
-import players from "./players";
-import type { Player } from "./players";
-import { Card } from "./components/Card";
-import { getGifUrl } from "./utils";
-import "./App.css";
+import data from "../data";
+import type { Data } from "../data";
+import { Card } from "./Card";
+import { getGifUrl } from "../utils";
+import "../styles/App.css";
 
 const API_KEY = "Sv8ppGyxWpTMsC5PLH90uvD2RvUuM4fF";
 let didInit = false;
 
-interface PlayerList extends Player {
+interface DataList extends Data {
   gifUrl: string;
 }
 
 function App() {
-  const [playerList, setPlayerList] = useState<PlayerList[]>([]);
-  const [selectedPlayers, setSelectedPlayers] = useState<Set<string>>(new Set());
+  const [dataList, setDataList] = useState<DataList[]>([]);
+  const [selectedPlayers, setSelectedPlayers] = useState<Set<string>>(
+    new Set()
+  );
   const [score, setScore] = useState(0);
   const [maxScore, setMaxScore] = useState(0);
 
-  function shufflePlayers(array: PlayerList[]) {
+  function shufflePlayers(array: DataList[]) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
 
@@ -37,7 +39,7 @@ function App() {
 
     setScore(score + 1);
     setSelectedPlayers(new Set(selectedPlayers.add(id)));
-    setPlayerList(shufflePlayers(playerList.slice()))
+    setDataList(shufflePlayers(dataList.slice()));
   }
 
   useEffect(() => {
@@ -57,35 +59,41 @@ function App() {
       }
 
       async function getImagesUrlsFromGifs() {
-        const gifs = await fetchGifs(
-          players.map((player) => getGifUrl(player.id, API_KEY))
-        );
+        const gifs = await fetchGifs(data.map((d) => getGifUrl(d.id, API_KEY)));
 
-        const playersWithImgUrl: PlayerList[] = [];
-        for (const [i, player] of players.entries()) {
+        const playersWithImgUrl: DataList[] = [];
+        for (const [i, player] of data.entries()) {
           playersWithImgUrl.push({
             ...player,
             gifUrl: gifs[i].data.images.original.url,
           });
         }
 
-        setPlayerList(shufflePlayers(playersWithImgUrl));
+        setDataList(shufflePlayers(playersWithImgUrl));
       }
 
       getImagesUrlsFromGifs();
     }
   }, []);
 
+  {
+    console.log(dataList);
+  }
   return (
-    <>
+    <div className="container">
       <header>
-        <p>{score}</p>
-        <p>{maxScore}</p>
+        <h2>🇦🇷 MemorArgentina</h2>
+        <div className="score">
+          <p>Score: {score}</p>
+          <p>Max Score:{maxScore}</p>
+        </div>
       </header>
-      {playerList.map((player) => (
-        <Card key={player.id} player={player} onClick={handleCardClick} />
-      ))}
-    </>
+      <div className="cards">
+        {dataList.map((d) => (
+          <Card key={d.id} data={d} onClick={handleCardClick} />
+        ))}
+      </div>
+    </div>
   );
 }
 

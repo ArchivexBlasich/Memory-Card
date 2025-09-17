@@ -1,15 +1,16 @@
-import type { Player } from "../players.ts";
+import type { Data } from "../data.ts";
+import "../styles/Card.css"
 
-interface PlayerWithGift extends Player {
+interface DataWithGift extends Data {
   gifUrl: string;
 }
 
-type cardProps = { player: PlayerWithGift; onClick: (id: string) => void };
+type cardProps = { data: DataWithGift; onClick: (id: string) => void };
 
-function Card({ player, onClick }: cardProps) {
+function Card({ data, onClick }: cardProps) {
   return (
-    <button onClick={() => onClick(player.id)}>
-      <img src={player.gifUrl} alt={player.name} />
+    <button className="card" onClick={() => onClick(data.id)}>
+      <img src={data.gifUrl} alt={data.name} />
     </button>
   );
 }
